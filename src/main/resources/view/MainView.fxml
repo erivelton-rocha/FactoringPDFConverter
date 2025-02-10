@@ -1,8 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
-	<!-- TODO Add Nodes -->
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.factoring.pdf2csv.controller.MainController">
+    <VBox spacing="10" alignment="CENTER" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <Label text="Conversor de PDF para CSV" style="-fx-font-size: 18px;"/>
+
+        <HBox spacing="5">
+            <Label text="Arquivo PDF:"/>
+            <TextField fx:id="filePathField" editable="false" minWidth="300"/>
+            <Button text="Selecionar" onAction="#selectPdfFile"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Banco:"/>
+            <ComboBox fx:id="bankComboBox"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Valor Total dos Títulos:"/>
+            <TextField fx:id="totalValueField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Total Pago ao Cedente:"/>
+            <TextField fx:id="totalPaidField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Taxa IOF (%):"/>
+            <TextField fx:id="iofRateField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Tarifa:"/>
+            <TextField fx:id="feeField"/>
+        </HBox>
+
+        <Button text="Converter para CSV" onAction="#convertToCsv"/>
+
+        <Label fx:id="statusLabel" text="" style="-fx-text-fill: green;"/>
+    </VBox>
 </AnchorPane>
-
