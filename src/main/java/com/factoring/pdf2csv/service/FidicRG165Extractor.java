@@ -23,4 +23,10 @@ public class FidicRG165Extractor implements DataExtractor {
         return data;
 	}
 
+	@Override
+	public List<String[]> reprocessData(String text) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

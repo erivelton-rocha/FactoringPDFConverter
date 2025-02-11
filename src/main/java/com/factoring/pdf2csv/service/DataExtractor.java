@@ -10,4 +10,5 @@ public interface DataExtractor {
 	 * @return Lista de arrays de string representando os dados
 	 */
 	List<String[]> extractData(String text, double totalValue, double totalPaid, double iofRate, double fee);
+	List<String[]> reprocessData(String text); // Adicionando o método reprocessData
 }

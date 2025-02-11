@@ -3,39 +3,27 @@ package com.factoring.pdf2csv.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SBExtractor implements DataExtractor{
+public class SBExtractor implements DataExtractor {
 
-	@Override
-	public List<String[]> extractData(String text, double totalValue, double totalPaid, double iofRate, double fee) {
+    @Override
+    public List<String[]> extractData(String text, double totalValue, double totalPaid, double iofRate, double fee) {
+        List<String[]> data = new ArrayList<>();
+        
+        // Dividir o texto extraído em linhas usando o caractere de nova linha (\n)
+        String[] lines = text.split("\\r?\\n");
 
-		List<String[]> data = new ArrayList<>();
-		
-		String[] lines = text.split("\n");
-		 // Imprimir o conteúdo do PDF linha por linha (para depuração)
-        System.out.println("Conteúdo do PDF extraído:");
+        // Processar cada linha para separar os campos corretamente
         for (String line : lines) {
-            System.out.println(line);
-        }
+            // Expressão regular para separar os campos
+            String[] columns = line.split("(?<=\\d{4}-\\d{4})\\s+(?=\\d{2}/\\d{2}/\\d{4})");
 
-        // Processar cada linha para extrair a tabela
-        System.out.println("\nTabela extraída:");
-        boolean isTable = false;
-        for (String line : lines) {
-            if (line.startsWith("Documento")) {
-                isTable = true; // Começar a processar a partir da linha do cabeçalho
-                continue;
-            }
-            if (isTable) {
-                // Supondo que as colunas da tabela são separadas por espaços inconsistentes
-                // Ajuste o delimitador conforme necessário
-                String[] columns = line.split("\\s{2,}|\\s(?=\\d{2}/\\d{2}/\\d{4})");  // Usa dois ou mais espaços ou um espaço seguido de uma data como delimitadores
-                
-                // Verificar se a linha parece ser uma linha da tabela (por exemplo, verificando o número de colunas)
-                if (columns.length >= 4) {  // Ajuste o número mínimo de colunas conforme necessário
-                    data.add(columns);
-                    // Imprimir a linha da tabela
-                    System.out.println(String.join(" | ", columns));
-                }
+            // Adicionar a linha processada à lista de dados, se tiver pelo menos 2 colunas
+            if (columns.length == 2) {
+                String documento = columns[0];
+                String vencimentoValorSacado = columns[1];
+
+                // Adicionar a linha processada à lista de dados
+                data.add(new String[] { documento, vencimentoValorSacado });
             }
         }
 
@@ -43,5 +31,40 @@ public class SBExtractor implements DataExtractor{
         return data;
     }
 
-	
+    @Override
+    public List<String[]> reprocessData(String text) {
+        List<String[]> data = new ArrayList<>();
+        
+        // Dividir o texto extraído em linhas usando o caractere de nova linha (\n)
+        String[] lines = text.split("\\r?\\n");
+
+        // Processar cada linha para separar os campos corretamente
+        for (String line : lines) {
+            // Separar documento e vencimento/valor/sacado
+            String[] parts = line.split("\\s+(?=\\d{2}/\\d{2}/\\d{4}\\s+\\d{1,3},\\d{2})");
+
+            if (parts.length == 2) {
+                String documento = parts[0];
+                String vencimentoValorSacado = parts[1];
+
+                // Expressão regular para separar vencimento, valor e sacado
+                String[] vencimentoValorSacadoParts = vencimentoValorSacado.split("(?<=\\d{2}/\\d{2}/\\d{4})\\s+(?=\\d{1,3},\\d{2})");
+
+                if (vencimentoValorSacadoParts.length == 2) {
+                    String vencimento = vencimentoValorSacadoParts[0];
+                    String valorSacado = vencimentoValorSacadoParts[1];
+
+                    // Separar valor do sacado
+                    String valor = valorSacado.replaceAll("^(\\d{1,3},\\d{2}).*", "$1");
+                    String sacado = valorSacado.replaceFirst("^\\d{1,3},\\d{2}", "").trim();
+
+                    // Adicionar a linha processada à lista de dados
+                    data.add(new String[] { documento, vencimento, valor, sacado });
+                }
+            }
+        }
+
+        // Retornar a lista de dados reprocessados
+        return data;
+    }
 }
