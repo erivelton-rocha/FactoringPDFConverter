@@ -15,7 +15,7 @@ public class App extends Application {
 		Parent root = fxmlLoader.load();
 		Scene scene = new Scene(root);
 		
-		stage.setTitle("Main");
+		stage.setTitle("PDFCSV Converter - Contratos FIDCS");
 		stage.setScene(scene);
 		stage.show();
 	}
